@@ -3,3 +3,9 @@ Requirements: libjson
 Run "make" within MATLAB to build the MEX functions.
 
 These have only been tested on Ubuntu 10.04 x64 using MATLAB 2010a.
+
+
+License: 
+GPL-3.0
+
+http://www.gnu.org/licenses/gpl-3.0.txt
