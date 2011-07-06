@@ -1,0 +1,5 @@
+Requirements: libjson
+
+Run "make" within MATLAB to build the MEX functions.
+
+These have only been tested on Ubuntu 10.04 x64 using MATLAB 2010a.
