@@ -1,8 +1,22 @@
+matlab-json is a fast and efficient JSON-parser for MATLAB
+
+Examples:
+
+>> a = struct(); a.name = 'Hello, World!'; a.data = magic(3);
+>> tojson(a);
+ans =
+{ "name": "Hello, World!", "data": [ [ 8, 3, 4 ], [ 1, 5, 9 ], [ 6, 7, 2 ] ] }
+
+>> fromjson('{"name": "Hello, World", "data": 123}')
+ans = 
+    name: 'Hello, World'
+    data: 123
+
+
 Requirements: 
 
 libjson (aka. JSON-c)
 https://github.com/json-c/json-c
-
 
 
 Run "make" within MATLAB to build the MEX functions.
@@ -11,7 +25,7 @@ Tested on:
 Ubuntu 10.04 x64 using MATLAB 2010a.
 Windows 7 x64 using MATLAB 2012a (x64 and win32)
 
-Binaries can be found under downloads.
+Precompiled Windows MEX-binaries can be found under downloads.
 
 License: 
 GPL-3.0
