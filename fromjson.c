@@ -12,6 +12,7 @@ void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
 
     char *buf;
     mwSize buflen;
+    struct json_object *jo;
 
     if (nrhs != 1) { 
         mexErrMsgTxt("One input argument required.");
@@ -30,7 +31,7 @@ void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
 
     mxGetString(prhs[0], buf, buflen); 
 
-    json_object * jo = json_tokener_parse(buf);
+    jo = json_tokener_parse(buf);
 
     if(is_error(jo))
         mexErrMsgTxt("error parsing json.");
@@ -46,7 +47,6 @@ void value(json_object *jo, mxArray ** mxa){
 
     enum json_type type = json_object_get_type(jo);
     mxArray *ma; 
-    int32_t *ptmp;
 
     switch (type) {
         case json_type_boolean: 
@@ -72,9 +72,10 @@ void array( json_object *jo, char *key, mxArray ** mxa) {
 
     enum json_type type;
     int i;
+    int len;
 
-    json_object *jv;
-    json_object *ja = jo; 
+    struct json_object *jv;
+    struct json_object *ja = jo;
 
     mxArray *ma;
 
@@ -82,7 +83,7 @@ void array( json_object *jo, char *key, mxArray ** mxa) {
         ja = json_object_object_get(jo, key);
     }
 
-    int len = json_object_array_length(ja); 
+    len = json_object_array_length(ja); 
 
     *mxa = mxCreateCellMatrix(len, 1);
 
@@ -127,11 +128,12 @@ int keys_count(json_object * jo){
 void keys_fill(json_object * jo, char *** keys, int count){
 
     int i = 0;
+    struct json_object_iter it;
     *keys = mxMalloc(count * sizeof(*keys));
 
-    json_object_object_foreach(jo, key, val){
-        (*keys)[i] = mxMalloc(sizeof(char)*(strlen(key)+1));       
-        strcpy((*keys)[i], key);
+    json_object_object_foreachC(jo, it){
+        (*keys)[i] = mxMalloc(sizeof(char)*(strlen(it.key)+1));       
+        strcpy((*keys)[i], it.key);
         i++;
     }
 }
@@ -139,33 +141,33 @@ void keys_fill(json_object * jo, char *** keys, int count){
 void object(json_object * jo, mxArray ** mxa) {
 
     enum json_type type;
+    struct json_object_iter it;
     char ** keys;
     mxArray *ma;
 
-    int i;
     int count = keys_count(jo); 
 
     keys_fill(jo, &keys, count);
 
     *mxa = mxCreateStructMatrix(1, 1, count, (const char**) keys);
 
-    json_object_object_foreach(jo, key, val) {
+    json_object_object_foreachC(jo, it) {
 
-        if(val){
-            type = json_object_get_type(val);
+        if(it.val){
+            type = json_object_get_type(it.val);
 
             switch (type) {
                 case json_type_boolean:
                 case json_type_double:
                 case json_type_int:
                 case json_type_string:
-                    value(val, &ma);
+                    value(it.val, &ma);
                     break;
                 case json_type_object: 
-                    object(json_object_object_get(jo, key), &ma);
+                    object(json_object_object_get(jo, it.key), &ma);
                     break;
                 case json_type_array: 
-                    array(jo, key, &ma);
+                    array(jo, it.key, &ma);
                     break;
             }
         }
@@ -173,7 +175,7 @@ void object(json_object * jo, mxArray ** mxa) {
             ma = mxCreateDoubleScalar(mxGetNaN());
         }
 
-        mxSetField(*mxa, 0, key, ma);
+        mxSetField(*mxa, 0, it.key, ma);
 
     }
 }

@@ -1,4 +1,9 @@
-Requirements: libjson
+Requirements: 
+
+libjson (aka. JSON-c)
+https://github.com/json-c/json-c
+
+
 
 Run "make" within MATLAB to build the MEX functions.
 

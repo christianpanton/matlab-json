@@ -11,6 +11,9 @@ void parse(mxArray *ma, json_object **jo);
 void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
 {
 
+    struct json_object *jo = NULL;
+    char* out;
+    
     if (nrhs != 1) { 
         mexErrMsgTxt("One input argument required.");
     } 
@@ -19,8 +22,6 @@ void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
         mexErrMsgTxt("Too many output arguments.");
     }
 
-    json_object *jo = NULL;
-    char* out;
 
     parse((mxArray *) prhs[0], &jo);    
 
