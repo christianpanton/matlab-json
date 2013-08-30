@@ -25,8 +25,6 @@ Tested on:
 Ubuntu 10.04 x64 using MATLAB 2010a.
 Windows 7 x64 using MATLAB 2012a (x64 and win32)
 
-Precompiled Windows MEX-binaries can be found under downloads.
-
 License: 
 GPL-3.0
 
