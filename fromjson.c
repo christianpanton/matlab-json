@@ -52,12 +52,9 @@ void value(json_object *jo, mxArray ** mxa){
         case json_type_boolean: 
             ma = mxCreateLogicalScalar(json_object_get_boolean(jo));
             break;
+        case json_type_int: 
         case json_type_double: 
             ma = mxCreateDoubleScalar(json_object_get_double(jo));
-            break;
-        case json_type_int: 
-            ma = mxCreateNumericMatrix(1, 1, mxINT32_CLASS, mxREAL);
-            *((int32_t *)mxGetData(ma)) = json_object_get_int(jo);
             break;
         case json_type_string: 
             ma = mxCreateString(json_object_get_string(jo));
