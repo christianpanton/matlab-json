@@ -1,4 +1,5 @@
 #include <json/json.h>
+#include <json/json_object_private.h>
 #include <stdio.h>
 #include <string.h>
 #include "mex.h"
@@ -11,7 +12,6 @@ void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
 {
 
     char *buf;
-    mwSize buflen;
     struct json_object *jo;
 
     if (nrhs != 1) { 
@@ -26,11 +26,7 @@ void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
         mexErrMsgTxt("Input argument must be a string.");
     }
 
-    buflen = mxGetN(prhs[0])*sizeof(mxChar)+1;
-    buf = mxMalloc(buflen);
-
-    mxGetString(prhs[0], buf, buflen); 
-
+    buf = mxArrayToString(prhs[0]);
     jo = json_tokener_parse(buf);
 
     if(is_error(jo))
@@ -52,12 +48,12 @@ void value(json_object *jo, mxArray ** mxa){
         case json_type_boolean: 
             ma = mxCreateLogicalScalar(json_object_get_boolean(jo));
             break;
+        case json_type_int: 
+            ma = mxCreateNumericMatrix(1, 1, mxINT64_CLASS, mxREAL);
+            *((int64_t *)mxGetData(ma)) = json_object_get_int64(jo);
+            break;    
         case json_type_double: 
             ma = mxCreateDoubleScalar(json_object_get_double(jo));
-            break;
-        case json_type_int: 
-            ma = mxCreateNumericMatrix(1, 1, mxINT32_CLASS, mxREAL);
-            *((int32_t *)mxGetData(ma)) = json_object_get_int(jo);
             break;
         case json_type_string: 
             ma = mxCreateString(json_object_get_string(jo));
