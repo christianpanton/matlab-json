@@ -1,8 +1,11 @@
-#include <json/json.h>
-#include <json/json_object_private.h>
+#include <json.h>
+#include <json_object_private.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include "mex.h"
+
+#define DBG_MSG 0
 
 
 void object(json_object * jo, mxArray ** mxa); 
