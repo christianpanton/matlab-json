@@ -33,6 +33,9 @@ void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
         mexErrMsgTxt("error parsing json.");
     else
         parse(jo, &plhs[0]);
+
+    /* free memory */
+    json_object_put(jo);
     
 
 }
@@ -109,6 +112,13 @@ void array( json_object *jo, char *key, mxArray ** mxa) {
         mxSetCell(*mxa, i, ma);
 
     }
+
+
+    if(key){ 
+        /* free memory */
+        json_object_put(ja);
+    }
+
 }
 
 int keys_count(json_object * jo){
