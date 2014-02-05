@@ -27,13 +27,14 @@ void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
 
     if(jo){
         out = (char*) json_object_to_json_string(jo);
+        /* free memory */
+        json_object_put(jo);
     }
     else{
         out = "null";
     }
 
     plhs[0] = mxCreateString(out);
-
 }
 
 void numeric(double dbl, json_object **jo){

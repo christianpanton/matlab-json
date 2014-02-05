@@ -5,6 +5,7 @@
 #include "mex.h"
 
 
+
 void object(json_object * jo, mxArray ** mxa); 
 void parse(json_object * jo, mxArray ** mxa); 
 
@@ -36,6 +37,7 @@ void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
 
     /* free memory */
     json_object_put(jo);
+    mxFree(buf);
     
 
 }
