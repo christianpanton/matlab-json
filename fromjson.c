@@ -116,11 +116,6 @@ void array( json_object *jo, char *key, mxArray ** mxa) {
     }
 
 
-    if(key){ 
-        /* free memory */
-        json_object_put(ja);
-    }
-
 }
 
 int keys_count(json_object * jo){
