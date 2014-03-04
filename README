@@ -18,6 +18,8 @@ Requirements:
 libjson (aka. JSON-c)
 https://github.com/json-c/json-c (0.11 minimum)
 
+To enable maximum precision of floating point values, consider patching "json_object.c" in libjson, by changning the formatting string in the function "json_object_double_to_json_string" from "%f" to "%.17g".
+
 
 Run "make" within MATLAB to build the MEX functions.
 
