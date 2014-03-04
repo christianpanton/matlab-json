@@ -1,8 +1,11 @@
-#include <json/json.h>
-#include <json/json_object_private.h>
+#include <json.h>
+#include <json_object_private.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include "mex.h"
+
+#define DBG_MSG 0
 
 
 
@@ -28,7 +31,11 @@ void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
     }
 
     buf = mxArrayToString(prhs[0]);
+    if (DBG_MSG)
+        mexPrintf("Start  @%.2f\n", (double)clock()/CLOCKS_PER_SEC);
     jo = json_tokener_parse(buf);
+    if (DBG_MSG)
+        mexPrintf("Parsed @%.2f\n", (double)clock()/CLOCKS_PER_SEC);
 
     if(is_error(jo))
         mexErrMsgTxt("error parsing json.");
@@ -39,7 +46,8 @@ void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
     json_object_put(jo);
     mxFree(buf);
     
-
+    if (DBG_MSG)
+        mexPrintf("Done  @%.2f\n", (double)clock()/CLOCKS_PER_SEC);
 }
 
 
@@ -84,35 +92,92 @@ void array( json_object *jo, char *key, mxArray ** mxa) {
         ja = json_object_object_get(jo, key);
     }
 
-    len = json_object_array_length(ja); 
-
-    *mxa = mxCreateCellMatrix(len, 1);
-
-    for (i=0; i< len; i++){
-
-        jv = json_object_array_get_idx(ja, i); 
-
-        if(jv){
-            type = json_object_get_type(jv);
-
-            if (type == json_type_array) {
-                array(jv, NULL, &ma);
-            }
-
-            else if (type != json_type_object) {
-                value(jv, &ma);
-            }
-
-            else {
-                object(jv, &ma);
+    len = json_object_array_length(ja);
+    
+    // Check if all elements have the same type
+    enum json_type t_elem, c_elem;
+    bool simple_array = false;
+    if (len >= 1) {
+        t_elem = json_object_get_type(json_object_array_get_idx(ja, 0));
+        if (t_elem == json_type_boolean || t_elem == json_type_double
+            || t_elem == json_type_int) {
+            simple_array = true;
+            for (i=0; i<len; i++) {
+                c_elem = json_object_get_type(json_object_array_get_idx(ja, i));
+                if (t_elem != c_elem)
+                    if ((t_elem == json_type_double || t_elem == json_type_int)
+                        && (c_elem == json_type_double || c_elem == json_type_int))
+                            t_elem = json_type_double;
+                    else
+                        simple_array = false; break;
             }
         }
-        else{
-            ma = mxCreateDoubleScalar(mxGetNaN());
+    }
+
+    if (simple_array) {
+        mxLogical *dataL;
+        int64_T  *dataI;
+        double  *dataD;
+        switch (t_elem) {
+            case json_type_boolean: 
+                *mxa = mxCreateLogicalMatrix(len, 1);
+                dataL = mxGetLogicals(*mxa);
+                break;
+            case json_type_int: 
+                *mxa = mxCreateNumericMatrix(len, 1, mxINT64_CLASS, mxREAL);
+                dataI = (int64_T *)mxGetData(*mxa);
+                break;    
+            case json_type_double: 
+                *mxa = mxCreateDoubleMatrix(len, 1, mxREAL);
+                dataD = mxGetPr(*mxa);
+                break;
         }
+        
+        for (i=0; i< len; i++){
+            jv = json_object_array_get_idx(ja, i);
+            
+            switch (t_elem) {
+                case json_type_boolean: 
+                    dataL[i] = json_object_get_boolean(jv);
+                    break;
+                case json_type_int: 
+                    dataI[i] = json_object_get_int64(jv);
+                    break;    
+                case json_type_double: 
+                    dataD[i] = json_object_get_double(jv);
+                    break;
+            }
+        }
+    } else {
 
-        mxSetCell(*mxa, i, ma);
+        *mxa = mxCreateCellMatrix(len, 1);
 
+        for (i=0; i< len; i++){
+
+            jv = json_object_array_get_idx(ja, i); 
+
+            if(jv){
+                type = json_object_get_type(jv);
+
+                if (type == json_type_array) {
+                    array(jv, NULL, &ma);
+                }
+
+                else if (type != json_type_object) {
+                    value(jv, &ma);
+                }
+
+                else {
+                    object(jv, &ma);
+                }
+            }
+            else{
+                ma = mxCreateDoubleScalar(mxGetNaN());
+            }
+
+            mxSetCell(*mxa, i, ma);
+
+        }
     }
 
 
