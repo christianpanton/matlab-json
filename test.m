@@ -14,6 +14,11 @@ matlab_object = fromjson(test_string);
 assert(matlab_object.float ==  1234567890000.123);
 assert(matlab_object.integer == 1234567890000);
 
+% testing special floats, must be converted to null according to spec
+matlab_object = [NaN, Inf, -Inf];
+test_string = tojson(matlab_object);
+assert(strcmp(test_string, '[ null, null, null ]'));
+
 display('All tests OK');
 clear test_string;
 clear matlab_object;

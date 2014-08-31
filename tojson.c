@@ -41,7 +41,7 @@ void numeric(double dbl, json_object **jo){
 
     int intgr = round(dbl);
 
-    if(mxIsNaN(dbl)){
+    if(mxIsNaN(dbl) || mxIsInf(dbl)){
         *jo = NULL;
     }
     else{
