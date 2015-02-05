@@ -2,6 +2,14 @@
 #include <string.h>
 #include "mex.h"
 
+/*
+/* setjsonfield(struct, 'name', 'value') is equivilent of struct.name = 'value';
+/*
+/* This is needed for setting illegal structure member names in MATLAB, 
+/* that might be required for the json output. Examples include names that begin with
+/* a number.
+*/
+
 
 void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
 {  
