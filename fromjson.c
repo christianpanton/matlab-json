@@ -30,7 +30,7 @@ void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
     buf = mxArrayToString(prhs[0]);
     jo = json_tokener_parse(buf);
 
-    if(is_error(jo))
+    if(jo == NULL)
         mexErrMsgTxt("error parsing json.");
     else
         parse(jo, &plhs[0]);
