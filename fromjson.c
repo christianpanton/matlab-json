@@ -1,5 +1,5 @@
-#include <json/json.h>
-#include <json/json_object_private.h>
+#include <json.h>
+#include <json_object_private.h>
 #include <stdio.h>
 #include <string.h>
 #include "mex.h"

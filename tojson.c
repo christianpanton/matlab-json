@@ -1,4 +1,4 @@
-#include <json/json.h>
+#include <json.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
