@@ -85,8 +85,7 @@ void parse(mxArray *ma, json_object **jo){
 
     /* was char - convert to string*/
     if(mxIsChar(ma)){
-        char *str = mxMalloc((num_el + 1)*sizeof(char*));
-        mxGetString(ma, str, num_el + 1);
+        char *str = mxArrayToString(ma);
         *jo = json_object_new_string(str);
     }
     /* was struct - convert to object */
