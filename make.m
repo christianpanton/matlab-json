@@ -1,6 +1,7 @@
 function make(varargin)
 
-mexargs_common = [{'-g'} varargin];
+% mexargs_common = [{'-g'} varargin];
+mexargs_common = [ varargin];
 mexargs_json = [mexargs_common {'-ljson-c'}];
 
 if ispc
