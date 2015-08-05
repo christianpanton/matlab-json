@@ -67,12 +67,16 @@ void object(mxArray *ma, int i, json_object **jo){
 
     for(; j < n; j++){
         tmpma = mxGetFieldByNumber(ma, i, j);
+        bool needDestroy = false;
         if (tmpma == NULL){
             /* Object is NULL, create an empty matrix instead */
             tmpma = mxCreateNumericMatrix(0, 0, mxDOUBLE_CLASS, mxREAL);
+            needDestroy = true;
         }
         parse(tmpma, &tmpobj);
         json_object_object_add(*jo, mxGetFieldNameByNumber(ma, j), tmpobj);
+        if (needDestroy)
+            mxDestroyArray(tmpma);
     }
 }
 
