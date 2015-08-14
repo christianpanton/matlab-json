@@ -2,7 +2,7 @@
 
 Examples:
 
-```matlab
+```
 >> a = struct(); a.name = 'Hello, World!'; a.data = magic(3);
 >> tojson(a);
 ans =
