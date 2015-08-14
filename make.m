@@ -26,6 +26,7 @@ if ispc
     mex(mexargs_json{:}, 'tojson.c')
 else
     % Linux/Ubuntu/GCC
+    mexargs_json = ['-D JSON_C_DIR_PREFIXED ' mexargs_json];
     mex(mexargs_json{:}, 'fromjson.c')
     mex(mexargs_json{:}, '-lm', 'tojson.c')
 end
