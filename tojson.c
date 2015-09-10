@@ -88,9 +88,9 @@ void object(mxArray *ma, int i, json_object **jo){
 void parse(mxArray *ma, json_object **jo){
 
     int i = 0;
-    int num_el = mxGetNumberOfElements(ma);
-    int m = mxGetM(ma);
-    int n = mxGetN(ma);
+    size_t num_el = mxGetNumberOfElements(ma);
+    size_t m = mxGetM(ma);
+    size_t n = mxGetN(ma);
 
     json_object *lobj;
     json_object *tmpobj;
@@ -242,6 +242,3 @@ void parse(mxArray *ma, json_object **jo){
 
 
 }
-
-
-
