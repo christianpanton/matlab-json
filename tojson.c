@@ -18,17 +18,17 @@ void mexFunction (int nlhs, mxArray* plhs[], int nrhs, const mxArray* prhs[])
 
     struct json_object *jo = NULL;
     char* out;
-    
-    if (nrhs != 1) { 
+
+    if (nrhs != 1) {
         mexErrMsgTxt("One input argument required.");
-    } 
+    }
 
     if (nlhs > 1) {
         mexErrMsgTxt("Too many output arguments.");
     }
 
 
-    parse((mxArray *) prhs[0], &jo);    
+    parse((mxArray *) prhs[0], &jo);
 
     if(jo){
         out = (char*) json_object_to_json_string(jo);
@@ -56,23 +56,23 @@ void numeric(double dbl, json_object **jo){
         else{
             *jo = json_object_new_int(intgr);
         }
-    }   
+    }
 }
 
 
 void object(mxArray *ma, int i, json_object **jo){
-    
+
     int j = 0;
     int n = mxGetNumberOfFields(ma);
     mxArray *tmpma;
     json_object *tmpobj;
 
     *jo = json_object_new_object();
-    
+
 
     for(; j < n; j++){
-        tmpma = mxGetFieldByNumber(ma, i, j);
         bool needDestroy = false;
+        tmpma = mxGetFieldByNumber(ma, i, j);
         if (tmpma == NULL){
             /* Object is NULL, create an empty matrix instead */
             tmpma = mxCreateNumericMatrix(0, 0, mxDOUBLE_CLASS, mxREAL);
@@ -122,7 +122,7 @@ void parse(mxArray *ma, json_object **jo){
                     json_object_array_add(*jo,lobj);
                 }
 
-                object(ma, i, &tmpobj); 
+                object(ma, i, &tmpobj);
 
                 if(m > 1)
                     json_object_array_add(lobj, tmpobj);
@@ -138,17 +138,17 @@ void parse(mxArray *ma, json_object **jo){
 
         *jo = json_object_new_array();
 
-        if(n == 1){ 
+        if(n == 1){
             n = m;
             m = 1;
-        }   
+        }
 
         for(i = 0; i < num_el; i++){
 
-            if(i % m == 0 && m > 1){ 
+            if(i % m == 0 && m > 1){
                 lobj = json_object_new_array();
                 json_object_array_add(*jo,lobj);
-            }   
+            }
 
             tmpma = mxGetCell(ma, i);
 
@@ -222,11 +222,11 @@ void parse(mxArray *ma, json_object **jo){
                 }
 
                 if(mxIsLogical(ma))
-                    tmpobj = json_object_new_boolean(bl[i]); 
+                    tmpobj = json_object_new_boolean(bl[i]);
                 else if(mxIsDouble(ma))
                     numeric(dbl[i], &tmpobj);
                 else
-                    numeric((double)intgr[i], &tmpobj);  
+                    numeric((double)intgr[i], &tmpobj);
 
                 if(m > 1)
                     json_object_array_add(lobj, tmpobj);
