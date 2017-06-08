@@ -1,0 +1,9 @@
+# Default to auto-detecting text files.  Overrides are below.
+*           text=auto
+
+# Force text
+*.c
+
+# Force binary
+*.o         binary
+.mex*       binary
